@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import glob
 from matplotlib.gridspec import GridSpec
 
-data_dir = "C:/Users/gabri/Downloads/All_Data_nc"   # <-- adjust if needed
+data_dir = "C:/Users/gabri/Downloads/All_Data_nc"   
 
 # ---------- quick open helpers ----------
 def open_var(exp, var, table="Amon"):                # Amon for wap and o3
@@ -15,13 +15,12 @@ wap_sulf  = open_var("G6sulfur", "wap")              # Pa s⁻1
 wap_solar = open_var("G6solar" , "wap")
 o3_sulf   = open_var("G6sulfur", "o3")               # mol mol-1
 o3_solar  = open_var("G6solar" , "o3")
-# ----------- EP-flux proxy: vertical shear of zonal wind, 2020s–2090s panel plot -----------
 
-# --- load ua ---
+
 ua_sulf  = open_var("G6sulfur", "ua")
 ua_solar = open_var("G6solar" , "ua")
 
-# --- Set up decades ---
+
 decades = {
     "2020s": slice("2020-01-01", "2029-12-30"),
     "2030s": slice("2030-01-01", "2039-12-30"),
@@ -34,7 +33,7 @@ decades = {
 }
 
 g  = 9.80665       # m s-2
-H  = 7.5           # km (scale height used in your scripts)
+H  = 7.5           # km 
 
 fig, axs = plt.subplots(2, 4, figsize=(18, 8), sharey=True)
 levels_shear = np.arange(-0.001, 0.0011, 0.0002)
@@ -48,7 +47,6 @@ for ax, (decade, period) in zip(axs.flat, decades.items()):
     dua_dp = ua_Δ.differentiate("plev")           # m s-1 Pa-1
     dua_dz = -dua_dp * ua_Δ.plev / (H * 1000.0)
     
-    # --- Altitude for axis (same as your other figs) ---
     z_km = -H * np.log(ua_Δ.plev / 101325.0)      # km
 
     pcm = ax.contourf(ua_Δ.lat, z_km, dua_dz,
@@ -58,14 +56,12 @@ for ax, (decade, period) in zip(axs.flat, decades.items()):
     ax.set_xlim(-90, 90)
     ax.set_ylim(33, 15)
 
-    # Fix for y/x labels
     row, col = divmod(list(axs.flat).index(ax), 4)
     if col == 0:
         ax.set_ylabel("Altitude (km)")
     if row == 1:
         ax.set_xlabel("Latitude")
 
-# Colorbar
 fig.subplots_adjust(right=0.92, bottom=0.11)
 cbar_ax = fig.add_axes([0.94, 0.13, 0.015, 0.75])
 fig.colorbar(pcm, cax=cbar_ax, label="∂u/∂z  (m s⁻¹ km⁻¹)")
@@ -77,7 +73,6 @@ plt.tight_layout(rect=[0, 0, 0.92, 0.95])
 plt.show()
 
 
-# ---------- convert units ----------
 wap_sulf  = wap_sulf  * 86400 / 100.0   #  Pa s⁻1 → hPa day⁻1  (1 hPa = 100 Pa)
 wap_solar = wap_solar * 86400 / 100.0
 
@@ -148,7 +143,6 @@ for i, (label, period) in enumerate(decades):
     if row == 3:
         ax.set_xlabel("Latitude")
 
-# ---------- shared colour-bar ----------
 cax = fig.add_axes([0.15, 0.05, 0.7, 0.02])
 cb  = fig.colorbar(pcm, cax=cax, orientation="horizontal")
 cb.set_label("Δ wap  (hPa day$^{-1}$)  —  negative = stronger upwelling")
