@@ -58,7 +58,6 @@ for i, (decade_label, period) in enumerate(decades):
     ax.contourf(Δtntr.lat, lev_km, stipple, levels=[0.5, 1], 
                 hatches=["..."], colors="none")
     
-    # Set consistent axes limits and labels
     ax.set_ylim(33, 15)  # show 15–33 km only
     ax.set_title(f"{decade_label}")
     
@@ -70,7 +69,7 @@ for i, (decade_label, period) in enumerate(decades):
     if row == 3:
         ax.set_xlabel("Latitude")
 
-cbar_ax = fig.add_axes([0.15, 0.05, 0.7, 0.02])  # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.15, 0.05, 0.7, 0.02])  
 cbar = fig.colorbar(pcm, cax=cbar_ax, orientation='horizontal')
 cbar.set_label("Δ tntr (K day⁻¹)", labelpad=5)
 
