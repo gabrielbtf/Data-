@@ -41,7 +41,6 @@ print("Calculating global mean time series...")
 global_rtmt_sulf = global_mean(rtmt_sulf)
 global_rtmt_solar = global_mean(rtmt_solar)
 
-# ---------- Calculate annual means and standard deviations ----------
 # First, create a new time coordinate with just the year
 rtmt_sulf_year = rtmt_sulf.assign_coords(year=rtmt_sulf.time.dt.year)
 rtmt_solar_year = rtmt_solar.assign_coords(year=rtmt_solar.time.dt.year)
