@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-# === SETTINGS ===
 folder = "/Users/gabrielfitzpatrick/Downloads/o3"
 solar_paths = [
     f"{folder}/o3_Amon_UKESM1-0-LL_G6solar_r1i1p1f2_gn_202001-204912.nc",
@@ -76,10 +75,8 @@ def make_panel_pdf(o3, lat, plev, baseline, scenario_name, outfolder, levels=np.
         else:
             ax.set_xlabel("")
 
-    # Main title: as high as possible, but not cut off
     fig.suptitle(f"Ozone Zonal Mean Anomalies by Decade ({scenario_name})", fontsize=21, y=0.99)
 
-    # Colorbar: way lower, below "Latitude"
     cbar_ax = fig.add_axes([0.18, 0.025, 0.65, 0.03])  # Lower (bottom=0.025)
     cbar = fig.colorbar(pcm, cax=cbar_ax, orientation='horizontal', label="O₃ anomaly (kg/kg)")
     cbar.ax.tick_params(labelsize=13)
@@ -89,7 +86,7 @@ def make_panel_pdf(o3, lat, plev, baseline, scenario_name, outfolder, levels=np.
     plt.close()
     print(f"✅ Saved {pdfname}")
 # === Make both PDFs ===
-print("📦 Loading data and generating panel plots...")
+print(" Loading data and generating panel plots...")
 
 # G6solar
 o3_solar, lat, plev = load_and_prep(solar_paths)
@@ -101,4 +98,4 @@ o3_sulfur, lat, plev = load_and_prep(sulfur_paths)
 o3_baseline_sulfur = o3_sulfur.sel(time=slice("2020-01", "2029-12")).mean(dim=["time", "lon"])
 make_panel_pdf(o3_sulfur, lat, plev, o3_baseline_sulfur, "G6sulfur", folder)
 
-print("✅ All PDFs saved.")
+print(" All PDFs saved.")
