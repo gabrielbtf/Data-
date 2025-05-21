@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# --- Helper: Integrate O₃ column in Dobson Units (DU) ---
 def integrate_column(o3):
     """
     Integrate O3 [kg/kg] over pressure to get total column O3 in Dobson Units.
@@ -12,7 +11,6 @@ def integrate_column(o3):
     Returns:
         o3col_DU: 2D DataArray [lat, lon] or [lat] (Dobson Units)
     """
-    # Find which axis is pressure
     if 'plev' in o3.dims:
         pcoord = 'plev'
         plev = o3['plev']
