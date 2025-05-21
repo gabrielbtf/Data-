@@ -8,25 +8,22 @@ from matplotlib.gridspec import GridSpec
 
 data_dir = "C:/Users/gabri/Downloads/All_Data_nc"
 
-# ---------- helper to open ta ----------
 def open_ta(exp):
     files = glob.glob(f"{data_dir}/ta_Amon_UKESM1-0-LL_{exp}*.nc")
     return xr.open_mfdataset(files, combine="by_coords", parallel=False)["ta"]
 
-# ---------- Load data ----------
 print("Loading G6sulfur data...")
 ta_sulf = open_ta("G6sulfur")   # K
 print("Loading G6solar data...")
 ta_solar = open_ta("G6solar")
 
-# ---------- Print diagnostic information ----------
 print(f"Available coordinates: {list(ta_sulf.coords)}")
 print(f"Time encoding: {ta_sulf.time.encoding}")
 print(f"First few time values: {ta_sulf.time.values[:5]}")
 print(f"plev values: {ta_sulf.plev.values}")
 print(f"Pressure level units: {ta_sulf.plev.attrs.get('units', 'unknown')}")
 
-# ---------- altitude mask: Apply appropriate pressure levels ----------
+# ---------- altitude mask ----------
 # Determine if pressure levels are in Pa or hPa based on the range of values
 if ta_sulf.plev.max() > 1000:  # Likely in Pa
     # 24-26 km corresponds to approximately 30-25 hPa or 3000-2500 Pa
@@ -37,7 +34,7 @@ else:  # Likely in hPa
     target_plev_min, target_plev_max = 25, 30
     print(f"Using pressure range {target_plev_min}-{target_plev_max} hPa")
 
-# Create the mask
+# Create  mask
 alt_mask = (ta_sulf.plev >= target_plev_min) & (ta_sulf.plev <= target_plev_max)
 selected_plevs = ta_sulf.plev.values[alt_mask]
 print(f"Selected pressure levels: {selected_plevs}")
@@ -49,7 +46,6 @@ if len(selected_plevs) == 0:
     print(f"Using closest pressure level: {closest_plev}")
     alt_mask = ta_sulf.plev == closest_plev
 
-# ---------- Define decades for the panel plot - using 30-day months calendar ----------
 decades = [
     ("2020s", slice("2020-01-01", "2029-12-30")),
     ("2030s", slice("2030-01-01", "2039-12-30")),
@@ -92,11 +88,9 @@ gs = GridSpec(2, 4, figure=fig, wspace=0.3, hspace=0.4)
 for i, (decade_name, period) in enumerate(decades):
     row, col = divmod(i, 4)
     
-    # Create map projection
     projection = ccrs.Robinson()
     ax = fig.add_subplot(gs[row, col], projection=projection)
     
-    # Calculate decadal mean for this period
     dta = all_dtas[i]
     
     # Apply stippling where difference is less than natural variability
