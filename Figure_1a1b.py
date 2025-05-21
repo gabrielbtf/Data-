@@ -3,22 +3,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
 
-# -------- USER paths --------
 data_dir = "C:/Users/gabri/Downloads/All_Data_nc"
 
 so2_sulf_files = f"{data_dir}/so2_AERmon_UKESM1-0-LL_G6sulfur*.nc"
 aod_sulf_files = f"{data_dir}/od550aer_AERmon_UKESM1-0-LL_G6sulfur*.nc"
 
-# ---------- Helper: cosine-latitude weighting ----------
 def global_mean_2D(field):
     weights = np.cos(np.deg2rad(field.lat))
     return field.weighted(weights).mean(("lat", "lon"))
 
-# ---------- Open datasets ----------
 so2_sulf = xr.open_mfdataset(so2_sulf_files, parallel=False, combine="by_coords")
 aod_sulf = xr.open_mfdataset(aod_sulf_files, parallel=False, combine="by_coords")
 
-# ---------- Select lev band 17–33 km ----------
 alt_mask = (so2_sulf.lev >= 17_000) & (so2_sulf.lev <= 33_000)
 so2_strat = so2_sulf["so2"].sel(lev=alt_mask).mean("lev")  # shape: (time, lat, lon)
 
@@ -30,14 +26,12 @@ aod_gm = global_mean_2D(aod_sulf["od550aer"])  # Make sure it's also a global me
 so2_ann = so2_gm.resample(time="1YE").mean()
 aod_ann = aod_gm.resample(time="1YE").mean()
 
-# ---------- Print dimensions for debugging ----------
+# ---------debug----------
 print(f"so2_ann dimensions: {so2_ann.dims}")
 print(f"aod_ann dimensions: {aod_ann.dims}")
 
-# ---------- Align times (handles offset time axes) ----------
 so2_ann, aod_ann = xr.align(so2_ann, aod_ann, join='inner')
 
-# ---------- Convert to pandas directly ----------
 so2_df = so2_ann.to_pandas()
 aod_df = aod_ann.to_pandas()
 
@@ -52,7 +46,6 @@ if hasattr(aod_df, 'name'):  # It's a Series
 else:  # It's a DataFrame or higher
     aod_values = aod_df.values.flatten()
 
-# ---------- Create a new DataFrame with the flattened values ----------
 import pandas as pd
 df = pd.DataFrame({'so2': so2_values, 'aod': aod_values})
 df = df.dropna()
@@ -78,14 +71,12 @@ def decadal_stats(series):
             mids.append(d+5)
     return np.array(mids), np.array(means), np.array(sigs)
 
-# Create Series from the aligned data
 so2_series = pd.Series(so2_values, index=so2_ann.time.values)
 aod_series = pd.Series(aod_values, index=aod_ann.time.values)
 
 mid, so2m, so2sig = decadal_stats(so2_series)
 _, aodm, aodsig = decadal_stats(aod_series)
 
-# ---------- Plot ----------
 fig, axs = plt.subplots(2, 1, figsize=(7, 9), gridspec_kw={"height_ratios": [2, 3]})
 
 # (A) Scatter with fit
