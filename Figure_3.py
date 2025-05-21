@@ -15,11 +15,9 @@ def open_tntr_both(exp):
     ds = xr.open_mfdataset(files, combine="by_coords")
     return ds["tntr"]
 
-# Load both experiments and concatenate along time
 tntr_sulf = open_tntr_both(EXP_SULFUR)
 tntr_solar = open_tntr_both(EXP_SOLAR)
 
-# Define decades from 2020s through 2090s (CMIP6 360-day calendar: use day 30)
 decades = [(y, slice(f"{y}-01-01", f"{y+9}-12-30")) for y in range(2020, 2100, 10)]
 
 fig, ax = plt.subplots(figsize=(5, 7))
