@@ -76,5 +76,5 @@ cbar.set_label("Δ tntr (K day⁻¹)", labelpad=5)
 fig.suptitle("Stratospheric radiative-heating anomaly (G6sulfur – G6solar)", 
              fontsize=16, y=0.95)
 
-plt.tight_layout(rect=[0, 0.08, 1, 0.93])  # Adjust for the colorbar and title
+plt.tight_layout(rect=[0, 0.08, 1, 0.93]) 
 plt.show()
