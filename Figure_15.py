@@ -22,13 +22,11 @@ def open_n2o_both(exp):
     ds = xr.open_mfdataset(files, combine="by_coords")
     return ds["n2o"]
 
-# Load both files for both variables/experiments
 o3_sulf = open_o3_both(EXP_SULFUR)
 o3_solar = open_o3_both(EXP_SOLAR)
 n2o_sulf = open_n2o_both(EXP_SULFUR)
 n2o_solar = open_n2o_both(EXP_SOLAR)
 
-# Define decades from 2020s through 2090s (CMIP6 360-day calendar: use day 30)
 decades = [(y, slice(f"{y}-01-01", f"{y+9}-12-30")) for y in range(2020, 2100, 10)]
 
 fig, axs = plt.subplots(2, 4, figsize=(16, 8), sharex=True, sharey=True)
@@ -82,7 +80,6 @@ plt.tight_layout(rect=[0, 0, 1, 0.96])
 fig.savefig("O3_vs_N2O_by_decade_stats.png", dpi=300)
 plt.show()
 
-# Optionally, plot slope by decade
 import matplotlib.pyplot as plt
 valid_decades = [y for (y, _), slope in zip(decades, slopes) if slope is not None]
 plt.figure()
@@ -93,7 +90,6 @@ plt.title("Transport-chemistry diagnostic slope by decade\n(Antarctic, 60–90°
 plt.savefig("O3_vs_N2O_slope_by_decade_stats.png", dpi=300)
 plt.show()
 
-# Print stats for dissertation table
 print("Decade | slope | r | p")
 for (y, _), slope, r, p in zip(decades, slopes, rvals, pvals):
     print(f"{y}s: {slope:.2g} (r={r:.2f}, p={p:.2g})")
